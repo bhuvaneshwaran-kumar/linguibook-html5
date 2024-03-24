@@ -1,0 +1,22 @@
+{
+  "name": "linguibook-server",
+  "version": "1.0.0",
+  "description": "A Social Media platform for learning",
+  "main": "index.js",
+  "scripts": {
+    "start:server": "nodemon index.js",
+    "start:client": "cd .. && cd linguibook && npm run dev -- --port 8080",
+    "start": "concurrently \"npm run start:client\" \"npm run start:server\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "MERN",
+    "Stack"
+  ],
+  "author": "Bhuvan_Bhuvi",
+  "license": "MIT",
+  "dependencies": {
+    "concurrently": "^8.2.2",
+    "express": "^4.19.1"
+  }
+}
