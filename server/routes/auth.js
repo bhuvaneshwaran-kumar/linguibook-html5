@@ -12,7 +12,7 @@ Router.post('/refresh', async (req, res) => {
     const token = req.cookies[COOKIE_NAME]
 
     if (!token) {
-        return res.json({
+        return res.status(400).json({
             ok: false,
             message: 'no token Provided'
         })
@@ -20,7 +20,7 @@ Router.post('/refresh', async (req, res) => {
 
     const payload = await verifyRefreshToken(token)
     if (!payload) {
-        return res.json({
+        return res.status(400).json({
             ok: false,
             message: 'refresh token expaired'
         })
@@ -28,20 +28,20 @@ Router.post('/refresh', async (req, res) => {
 
     const user = await User.findById(payload._id).exec()
     if (!user) {
-        return res.json({ ok: false, message: 'no user exists with that token' })
+        return res.status(400).json({ ok: false, message: 'no user exists with that token' })
     }
 
     if (user.tokenVersion !== payload.tokenVersion) {
-        return res.json({ ok: false, message: 'Invalid Token' })
+        return res.status(400).json({ ok: false, message: 'Invalid Token' })
     }
 
     const { accessToken, refreshToken } = await createTokens(user)
     sendRefreshTokenAsCookie(res, refreshToken)
 
-    const { userName, email, _id } = user
-    return res.json({
+    const { userName, _id } = user
+    return res.status(200).json({
         ok: true,
-        data: { accessToken, user: { userName, email, _id } }
+        data: { accessToken, user: { userName, _id } }
     })
 
 })
@@ -50,11 +50,11 @@ Router.post('/refresh', async (req, res) => {
 Router.post('/signup', async (req, res) => {
     const data = req.body
     try {
-        const oldUsers = await User.find({ email: data.email })
+        const oldUsers = await User.find({ userName: data.userName })
         if (oldUsers.length > 0) {
-            return res.json({
+            return res.status(409).json({
                 ok: false,
-                message: 'user already found with the eamil id'
+                message: 'userName already exist!'
             })
         }
 
@@ -62,11 +62,11 @@ Router.post('/signup', async (req, res) => {
 
         const newUser = new User(data)
         await newUser.save()
-        const { userName, email, _id } = newUser
+        const { userName, _id } = newUser
 
-        return res.json({
+        return res.status(200).json({
             ok: true,
-            data: { userName, email, _id }
+            data: { userName, _id }
         })
     }
     catch (err) {

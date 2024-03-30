@@ -1,16 +1,31 @@
-import { createBrowserRouter } from 'react-router-dom';
-import LogIn from '../pages/Login';
-import App from '../pages/App';
+import { Navigate, createBrowserRouter } from 'react-router-dom';
+import { Auth } from '../pages/Auth.jsx';
+import { useSelector } from 'react-redux';
+import Home from '../pages/Home.jsx';
+import Profile from '../pages/Profile.jsx';
+
+function ProtectedRoute({ element }) {
+    const isAuthenticated = useSelector((state) => state.localStorage.get(["auth", "isLogged"]));
+
+    return isAuthenticated ? (
+        { element }
+    ) : (
+        <Navigate to="/auth" replace />
+    );
+}
 
 const router = createBrowserRouter([
     {
-        path: "/login",
-        element: <LogIn />,
-        
+        path: "/auth",
+        element: <Auth />
     },
-    {
+    {   
         path: "/",
-        element: <App />
+        element: <ProtectedRoute element={<Home />} />
+    },
+    {   
+        path: "/profile",
+        element: <ProtectedRoute element={<Profile />} />
     }
 ])
 
