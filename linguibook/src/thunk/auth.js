@@ -1,6 +1,14 @@
-import axios from '../utils/interceptors';
+import { axiosInstance as axios } from '../utils/interceptors';
+import * as fetch_axios from "axios"; // axios without interceptors
 import { updateAppLoad, updateUserAuth, updateUserData } from '../actions';
 import { setAccessToken } from '../utils/token';
+
+export const fetchRefreshToken = async () => {
+    const response = await axios.post(`/api/auth/refresh`, {}, { withCredentials: true });
+    const { accessToken, user } = response.data.data;
+    setAccessToken(accessToken);
+    return { user, token: accessToken }
+}  
 
 /** @Note remove when its no longer needed */
 export function wait(duration) {
@@ -16,11 +24,9 @@ export const checkUserAuth = () => {
     return async (dispatch, getState) => {
         try {
             await dispatch(updateUserAuth({ isLogged: false, isLoading: true }));
-
-            const response = await axios.post(`/api/auth/refresh`, {}, { withCredentials: true });
-            const { accessToken, user } = response.data;
+            await wait(500);
+            const { user } = await fetchRefreshToken();
             await dispatch(updateUserData(user));
-            setAccessToken(accessToken);
             await dispatch(updateUserAuth({ isLogged: true, isLoading: false }));
             // Process response if needed
             return true;
@@ -38,7 +44,7 @@ export const handleLogin = (userName, password) => {
         try {
             await dispatch(updateUserAuth({ isLogged: false, isLoading: true }));
             const response = await axios.post(`/api/auth/login`, { userName, password });
-            const { accessToken, user } = response.data;
+            const { accessToken, user } = response.data.data;
             await dispatch(updateUserData(user));
             setAccessToken(accessToken);
             await dispatch(updateUserAuth({ isLogged: true, isLoading: false }));
@@ -58,7 +64,6 @@ export const handleSignUp = (userName, password) => {
             const response = await axios.post(`/api/auth/signup`, {
                 userName, password
             });
-            console.log(response, "response");
             // Process response if needed
             return true;
         } catch (error) {
@@ -76,6 +81,7 @@ export const handleLogOut = () => {
             await dispatch(updateUserAuth({ isLogged: false, isLoading: false }));
             return true;
         } catch (error) {
+            console.log(error);
             return false;
         }
     };

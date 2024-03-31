@@ -1,22 +1,45 @@
 import axios from 'axios';
-import { getAccessToken } from './token';
+import { getAccessToken, isTokenExpired, setAccessToken } from './token';
 import { API_URI } from './constant';
+import { fetchRefreshToken } from '../thunk/auth';
 
-// Create an instance of axios
-const instance = axios.create({
+// Create an instance of Axios without the access token interceptor
+const axiosInstance = axios.create({
   baseURL: `${API_URI}`,
   withCredentials: true,
-  headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
-  // Other custom configurations
+  headers: {
+    'Content-Type': 'application/json', 'Accept': 'application/json'
+  }
+});
+
+const axiosWithAuthToken = axios.create({
+  baseURL: `${API_URI}`,
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json', 'Accept': 'application/json'
+  }
 });
 
 // Add a request interceptor
-instance.interceptors.request.use(
-  function (config) {
+axiosWithAuthToken.interceptors.request.use(
+  async function (config) {
+    let accessToken = getAccessToken();
+
+    if (accessToken !== "") {
+      console.log(accessToken, 'accessToken');
+      const isExpaired = isTokenExpired(accessToken);
+      if (isExpaired) {
+        try {
+          accessToken = await fetchRefreshToken().token;
+        } catch (error) {
+          return Promise.reject(error);
+        }
+      }
+    }
+
     // Modify config headers
-    config.headers['authorization'] = `Bearer ${getAccessToken()}`;
+    config.headers['authorization'] = `Bearer ${accessToken}`;
     config.headers['Content-Type'] = 'application/json';
-    // You can add more default headers or modify existing ones here
 
     return config;
   },
@@ -26,4 +49,4 @@ instance.interceptors.request.use(
   }
 );
 
-export default instance;
+export { axiosInstance, axiosWithAuthToken };

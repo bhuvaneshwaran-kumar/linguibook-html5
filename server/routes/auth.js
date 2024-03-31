@@ -124,6 +124,7 @@ Router.post('/logout', async (req, res) => {
             message: 'successfully Logged out'
         })
     } catch (err) {
+        console.log(err);
         res.json({
             ok: false, message: 'Ooops error occured.'
         })
