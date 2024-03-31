@@ -5,7 +5,7 @@ const User = require('../models/Users')
 const createTokens = async (user) => {
 
     const { userName, _id, tokenVersion } = user
-    const payload = { userName, _id }
+    let payload = { userName, _id }
 
     const accessToken = jwt.sign(payload, SECRET1, {
         expiresIn: "2m",

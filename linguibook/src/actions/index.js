@@ -13,3 +13,8 @@ export const updateUserAuth = (data) => ({
     type: "UPDATE_USER_AUTH",
     data
 })
+
+export const updateUserData = (data) => ({
+    type: "UPDATE_USER_DATA",
+    data
+})

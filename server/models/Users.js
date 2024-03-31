@@ -5,22 +5,21 @@ const { model, Schema } = mongoose
 const userSchema = new Schema(
     {
         userName: String,
-        email: String,
         password: String,
         bio: String,
         memInfo: {
             type: [String],
-            unique: true
+            default: [],
         },
         admInfo: {
             type: [String],
-            unique: true
+            default: []
         },
         tokenVersion: {
             type: Number,
             default: 0
         },
-        profileUrl: String
+        profileUrl: { type: String, default: "1.png" }
     },
     {
         timestamps: true

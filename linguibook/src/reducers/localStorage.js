@@ -4,19 +4,23 @@ const initialState = fromJS({
         name: "",
         bio: "",
         profileUrl: "",
+        _id: ""
     },
     appLoadStatus: {
         isLoading: true,
         loadPercent: 0,
     },
     auth: {
-        isLogged: undefined
+        isLogged: false,
+        isLoading: false
     }
 })
 
 const localStorage = (state = initialState, action) => { 
     switch (action.type) { 
         case "UPDATE_USER_DATA": { 
+            const { data: user } = action;
+            state = state.update("user", (userDet) => userDet.merge(user));
             return state;
         }
         case "UPDATE_APP_LOAD": {
@@ -25,8 +29,8 @@ const localStorage = (state = initialState, action) => {
             return state;
         }
         case "UPDATE_USER_AUTH": {
-            const { isLogged } = action.data;
-            state = state.update("auth", (authData) => authData.merge({ isLogged }));
+            const { isLogged, isLoading } = action.data;
+            state = state.update("auth", (authData) => authData.merge({ isLogged, isLoading }));
             return state;
         }
         default : 

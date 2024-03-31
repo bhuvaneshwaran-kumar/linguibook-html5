@@ -10,7 +10,7 @@ const { COOKIE_NAME } = require('../constants')
 // return user,accessToken (sets new refreshToken in res as a cookie)
 Router.post('/refresh', async (req, res) => {
     const token = req.cookies[COOKIE_NAME]
-
+    console.log(token, COOKIE_NAME, req.cookies);
     if (!token) {
         return res.status(400).json({
             ok: false,
@@ -38,10 +38,10 @@ Router.post('/refresh', async (req, res) => {
     const { accessToken, refreshToken } = await createTokens(user)
     sendRefreshTokenAsCookie(res, refreshToken)
 
-    const { userName, _id } = user
+    const { userName, _id, bio, profileUrl } = user
     return res.status(200).json({
         ok: true,
-        data: { accessToken, user: { userName, _id } }
+        data: { accessToken, user: { name: userName, _id, bio, profileUrl } }
     })
 
 })
@@ -81,18 +81,19 @@ Router.post('/signup', async (req, res) => {
 //  LOG IN
 Router.post('/login', async (req, res) => {
     const data = req.body
+    console.log(data);
     try {
-        const user = await User.findOne({ email: data.email })
+        const user = await User.findOne({ userName: data.userName })
         if (!user) {
-            return res.json({
+            return res.status(403).json({
                 ok: false,
-                message: `No User Exists with a eamil of ${data.email}`
+                message: `No User Exists with a user name of ${data.userName}`
             })
         }
 
         const isCorrectPassword = await bcrypt.compare(data.password, user.password)
         if (!isCorrectPassword)
-            return res.json({
+            return res.status(403).json({
                 ok: false,
                 message: `Invalid password`
             })
@@ -100,16 +101,16 @@ Router.post('/login', async (req, res) => {
         const { accessToken, refreshToken } = await createTokens(user)
         await sendRefreshTokenAsCookie(res, refreshToken)
 
-        const { userName, email, _id } = user
+        const { userName, _id, bio, profileUrl } = user
 
-        res.json({
+        res.status(200).json({
             ok: true,
-            data: { accessToken, user: { userName, _id, email } }
+            data: { accessToken, user: { name: userName, _id, bio, profileUrl } }
         })
 
     }
     catch (err) {
-        console.log(`Error while logging in: ${err.message}`)
+        console.log(`Error while logging in: ${err, err.message}`)
     }
 })
 
