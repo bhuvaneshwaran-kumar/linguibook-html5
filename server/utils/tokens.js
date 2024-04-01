@@ -45,7 +45,7 @@ const sendRefreshTokenAsCookie = (res, refreshToken) => {
         httpOnly: true, // only be accessible by server
         path: '/api/auth', // When a cookie is set with a specific path, it will only be sent by the client to the server for requests that match that path or its subpaths.
         secure: PROD, //  the cookie should be sent only over HTTPS connections.
-        expiresIn: 1000 * 60 * 60 * 24 * 7, // 7 days.
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days.
     })
 }
 
