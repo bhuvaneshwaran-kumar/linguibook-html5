@@ -4,3 +4,30 @@
     box-sizing: border-box;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
+
+.slbr-cus::-webkit-scrollbar {
+    width: 4px;
+}
+
+/* Set the same width for hover state */
+.slbr-cus::-webkit-scrollbar:hover {
+    width: 4px;
+}
+
+/* Track */
+.slbr-cus::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    /* Set background color of the track */
+}
+
+/* Handle */
+.slbr-cus::-webkit-scrollbar-thumb {
+    background: #888;
+    /* Set color of the scrollbar thumb */
+}
+
+/* Handle on hover */
+.slbr-cus::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    /* Set color of the scrollbar thumb on hover */
+}

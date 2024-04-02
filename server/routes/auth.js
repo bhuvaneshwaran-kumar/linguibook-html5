@@ -10,7 +10,6 @@ const { COOKIE_NAME } = require('../constants')
 // return user,accessToken (sets new refreshToken in res as a cookie)
 Router.post('/refresh', async (req, res) => {
     const token = req.cookies[COOKIE_NAME]
-    console.log(token, COOKIE_NAME, req.cookies);
     if (!token) {
         return res.status(400).json({
             ok: false,

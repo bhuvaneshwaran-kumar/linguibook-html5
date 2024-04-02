@@ -22,6 +22,7 @@ export const NavBar = styled.div`
     background: #5151ac;
     color: white;
     user-select: none;
+    height: 7vh;
 ` 
 
 export const NavLeft = styled.div`

@@ -1,7 +1,8 @@
-import { axiosInstance as axios } from '../utils/interceptors';
+import { axiosInstance as axios, axiosWithAuthToken as authAxios } from '../utils/interceptors';
 import * as fetch_axios from "axios"; // axios without interceptors
-import { updateAppLoad, updateUserAuth, updateUserData } from '../actions';
+import { updateAppLoad, updateContextData, updateUserAuth, updateUserData, updateVocabulariesComplete } from '../actions';
 import { setAccessToken } from '../utils/token';
+import { getContextDetials, getVocDetials } from './ctxtVoc';
 
 export const fetchRefreshToken = async () => {
     const response = await axios.post(`/api/auth/refresh`, {}, { withCredentials: true });
@@ -26,11 +27,18 @@ export const checkUserAuth = () => {
             await dispatch(updateUserAuth({ isLogged: false, isLoading: true }));
             await wait(500);
             const { user } = await fetchRefreshToken();
+            const { activeContextId, contextData } = await getContextDetials();
+            const { vocabularies } = await getVocDetials(activeContextId);
+
+
+            await dispatch(updateContextData({ id: activeContextId, data: contextData }));
+            await dispatch(updateVocabulariesComplete({ vocabularies }));
+
             await dispatch(updateUserData(user));
             await dispatch(updateUserAuth({ isLogged: true, isLoading: false }));
-            // Process response if needed
             return true;
         } catch (error) {
+            console.log(error, "error");
             await dispatch(updateUserAuth({ isLogged: false, isLoading: false }));
             return false;
         } finally {
