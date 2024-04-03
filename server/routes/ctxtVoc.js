@@ -29,8 +29,8 @@ Router.get('/getContext', isAuthenticated, async (req, res) => {
 Router.post('/getVoc', isAuthenticated, async (req, res) => {
     try {
         const { body, user } = req;
-        const { contextId, from, to } = body;
-        let result = await Vocabulary.aggregate(getVoc(contextId, from, to));
+        const { contextId, from, size } = body;
+        let result = await Vocabulary.aggregate(getVoc(contextId, from, size));
         return res.status(200).json({
             ok: true,
             data: { vocabularies: result[0] }

@@ -8,7 +8,7 @@ const createTokens = async (user) => {
     let payload = { userName, _id }
 
     const accessToken = jwt.sign(payload, SECRET1, {
-        expiresIn: "2s",
+        expiresIn: "10m",
     }) // short time and will be sent over http payload
 
     // tokenVersion is needed only in refreshToken, with tokenVersion we can revolk user auth
@@ -70,8 +70,7 @@ const isAuthenticated = async (req, res, next) => {
         req.user = payload
         return next()
     } catch (err) {
-        res.setStatus(401)
-        res.json({
+        res.status(401).json({
             ok: false,
             message: err
         })

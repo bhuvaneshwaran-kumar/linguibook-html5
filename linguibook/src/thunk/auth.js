@@ -28,8 +28,7 @@ export const checkUserAuth = () => {
             await wait(500);
             const { user } = await fetchRefreshToken();
             const { activeContextId, contextData } = await getContextDetials();
-            const { vocabularies } = await getVocDetials(activeContextId);
-
+            const { vocabularies } = await getVocDetials({ contextId: activeContextId });
 
             await dispatch(updateContextData({ id: activeContextId, data: contextData }));
             await dispatch(updateVocabulariesComplete({ vocabularies }));
@@ -53,8 +52,13 @@ export const handleLogin = (userName, password) => {
             await dispatch(updateUserAuth({ isLogged: false, isLoading: true }));
             const response = await axios.post(`/api/auth/login`, { userName, password });
             const { accessToken, user } = response.data.data;
-            await dispatch(updateUserData(user));
             setAccessToken(accessToken);
+            const { activeContextId, contextData } = await getContextDetials();
+            const { vocabularies } = await getVocDetials({ contextId: activeContextId });
+
+            await dispatch(updateContextData({ id: activeContextId, data: contextData }));
+            await dispatch(updateVocabulariesComplete({ vocabularies }));
+            await dispatch(updateUserData(user));
             await dispatch(updateUserAuth({ isLogged: true, isLoading: false }));
             return true;
         } catch (error) {

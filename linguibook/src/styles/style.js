@@ -10,8 +10,8 @@ export const WindowDiv = styled.div`
 `
 
 export const Image = styled.img`
-  width: ${props => props.width || '50%'};
-  height: ${props => props.height || '50%'};
+  width: ${props => props.width || '30vw'};
+  height: ${props => props.height || '30vw'};
 `;
 
 

@@ -26,17 +26,16 @@ axiosWithAuthToken.interceptors.request.use(
     let accessToken = getAccessToken();
 
     if (accessToken !== "") {
-      console.log(accessToken, 'accessToken');
       const isExpaired = isTokenExpired(accessToken);
       if (isExpaired) {
         try {
-          accessToken = await fetchRefreshToken().token;
+          const { token } = await fetchRefreshToken();
+          accessToken = token;
         } catch (error) {
           return Promise.reject(error);
         }
       }
     }
-
     // Modify config headers
     config.headers['authorization'] = `Bearer ${accessToken}`;
     config.headers['Content-Type'] = 'application/json';

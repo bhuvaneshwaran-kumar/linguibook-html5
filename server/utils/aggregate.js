@@ -1,4 +1,4 @@
-const getVoc = (contextId, from, to) => {
+const getVoc = (contextId, from, size) => {
   return [
     {
       $match: {
@@ -6,7 +6,7 @@ const getVoc = (contextId, from, to) => {
       }
     },
     { $skip: from },
-    { $limit: to },
+    { $limit: size },
     {
       $project: {
         _id: { $toString: "$_id" }, // Convert ObjectId to string

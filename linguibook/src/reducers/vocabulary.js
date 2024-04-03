@@ -1,10 +1,10 @@
-import { fromJS } from "immutable"
+import { OrderedMap, fromJS } from "immutable"
 const initialState = fromJS({
     context: {
         id: "",
-        data: {}
+        data: OrderedMap({})
     },
-    vocabularies: {}
+    vocabularies: OrderedMap({}),
 })
 
 const vocabulariesStorage = (state = initialState, action) => { 

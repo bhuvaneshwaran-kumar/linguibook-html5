@@ -24,6 +24,18 @@ export const updateContextData = (data) => ({
     data
 })
 
+/**
+ * 
+ * @param {object} data 
+ * @param {boolean} data.isVocChunkLoad
+ * @param {boolean} data.isVocLoading 
+ * @returns 
+ */
+export const setVocLoader = (data) => ({
+    type: "SET_VOC_LOADER",
+    data
+})
+
 export const updateVocabulariesComplete = (data) => ({
     type: "UPDATE_VOCABULARIES_COMPLETE",
     data
