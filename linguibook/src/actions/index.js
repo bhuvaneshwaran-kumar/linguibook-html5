@@ -36,7 +36,22 @@ export const setVocLoader = (data) => ({
     data
 })
 
-export const updateVocabulariesComplete = (data) => ({
-    type: "UPDATE_VOCABULARIES_COMPLETE",
+export const updateVocabularies = (data) => ({
+    type: "UPDATE_VOCABULARIES",
+    data
+})
+
+export const setVocabularies = (data) => ({
+    type: "SET_VOCABULARIES",
+    data
+})
+
+export const updateVocabData = data => ({
+    type: "UPDATE_VOCAB_DATA",
+    data
+})
+
+export const updateVocabDataComplete = data => ({
+    type: "UPDATE_VOCAB_DATA_COMPLETE",
     data
 })

@@ -17,9 +17,20 @@ const vocabulariesStorage = (state = initialState, action) => {
             state = state.setIn(["context", "id"], id);
             return state;
         }
-        case "UPDATE_VOCABULARIES_COMPLETE": { 
+        case "UPDATE_VOCABULARIES": { 
             const { vocabularies } = action.data;
             state = state.update("vocabularies", (vocData) => vocData.merge(vocabularies));
+            return state;
+        }
+        case "SET_VOCABULARIES": { 
+            const { contextId, vocabularies } = action.data;
+            state = state.set("vocabularies", vocabularies);
+            state = state.setIn(["context", "id"], contextId);
+            return state;
+        }
+        case "UPDATE_VOCAB_DATA_COMPLETE": {
+            const { isLiked, userId, vocabId } = action.data;
+            state = state.setIn(["vocabularies", vocabId, "isLiked"], isLiked);
             return state;
         }
         default : 

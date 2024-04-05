@@ -1,6 +1,6 @@
 import { axiosInstance as axios, axiosWithAuthToken as authAxios } from '../utils/interceptors';
 import * as fetch_axios from "axios"; // axios without interceptors
-import { updateAppLoad, updateContextData, updateUserAuth, updateUserData, updateVocabulariesComplete } from '../actions';
+import { updateAppLoad, updateContextData, updateUserAuth, updateUserData, updateVocabularies } from '../actions';
 import { setAccessToken } from '../utils/token';
 import { getContextDetials, getVocDetials } from './ctxtVoc';
 
@@ -31,7 +31,7 @@ export const checkUserAuth = () => {
             const { vocabularies } = await getVocDetials({ contextId: activeContextId });
 
             await dispatch(updateContextData({ id: activeContextId, data: contextData }));
-            await dispatch(updateVocabulariesComplete({ vocabularies }));
+            await dispatch(updateVocabularies({ vocabularies }));
 
             await dispatch(updateUserData(user));
             await dispatch(updateUserAuth({ isLogged: true, isLoading: false }));
@@ -57,7 +57,7 @@ export const handleLogin = (userName, password) => {
             const { vocabularies } = await getVocDetials({ contextId: activeContextId });
 
             await dispatch(updateContextData({ id: activeContextId, data: contextData }));
-            await dispatch(updateVocabulariesComplete({ vocabularies }));
+            await dispatch(updateVocabularies({ vocabularies }));
             await dispatch(updateUserData(user));
             await dispatch(updateUserAuth({ isLogged: true, isLoading: false }));
             return true;

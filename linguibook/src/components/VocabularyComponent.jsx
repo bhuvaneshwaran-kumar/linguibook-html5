@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { connect } from "react-redux"
 import styled from 'styled-components'
 import { loadVocData } from '../thunk/ctxtVoc'
+import { Image } from '../styles/style'
+import { updateVocabData } from '../actions'
 
 
 const VocabularyWrap = styled.div`
@@ -10,6 +12,7 @@ const VocabularyWrap = styled.div`
     border-radius: 5px;
     overflow: hidden;
     padding: 2px 4px;
+    position: relative;
 `
 
 const VocabularyListWrap = styled.div`
@@ -20,7 +23,7 @@ const VocabularyListWrap = styled.div`
     flex-wrap: wrap;
     justify-content: center;
     gap: 5px;
-
+    & .chunkLoader { height: 30px; width: 30px; }
 `
 
 const CardContainer = styled.div`
@@ -86,6 +89,22 @@ const CardContainer = styled.div`
   }
 `
 
+const CenterLoader = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(184, 223, 250, 0.308);
+
+  & > img {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+`
+
 function VocabularyComponent(props) {
   const { vocabularies, activeContextId } = props;
   const [hasMore, setHasMore] = useState(true);
@@ -99,6 +118,10 @@ function VocabularyComponent(props) {
     } else {
       setError(true)
     }
+  }
+
+  const handleLikeClick = (isLiked, vocabId) => { 
+    props.updateVocabData({ isLiked, vocabId });
   }
 
   const lastElementRef = useCallback((node) => {
@@ -139,7 +162,7 @@ function VocabularyComponent(props) {
             </div>
           </div>
           <div className="voc-btm" ref={(index + 1 === vocabularies.size) ? lastElementRef : null}>
-            <img src='/images/post/like.png' alt='like' />
+            <img src={`/images/post/${vocab.get("isLiked") ? 'like-active' : 'like'}.png`} alt='like' onClick={() => handleLikeClick(!vocab.get("isLiked"), key)} />
             <img src='/images/post/comment.png' alt='comment' />
           </div>
         </CardContainer>
@@ -149,8 +172,17 @@ function VocabularyComponent(props) {
 
   return (
     <VocabularyWrap>
+      { 
+        props.isVocLoading ? <CenterLoader><Image src="/images/spinner.gif" /></CenterLoader> : null
+      }
       <VocabularyListWrap className='slbr-cus'>
         {vocabListItems}
+        {
+          props.isVocChunkLoad ?
+            <div className='chunkLoader'>
+              <Image src="/images/spinner.gif" width={'30px'} height={'30px'} />
+            </div> : null
+        }
       </VocabularyListWrap>
     </VocabularyWrap>
   )
@@ -163,6 +195,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   loadVocData: (payLoad) => dispatch(loadVocData(payLoad)),
+  updateVocabData: (payLoad) => dispatch(updateVocabData(payLoad)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(VocabularyComponent)
