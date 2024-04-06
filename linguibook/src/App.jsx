@@ -8,6 +8,7 @@ import { Auth } from "./pages/Auth"
 import Home from "./pages/Home"
 import Profile from "./pages/Profile"
 import About from "./pages/About"
+import Community from "./pages/Community"
 
 /** @Desc if user is not logged in we should not allow private pages */
 function ProtectedRoute({ element }) {
@@ -52,6 +53,7 @@ function App() {
               {/* Potected route */}
               <Route path="/" element={<ProtectedRoute element={<Home />} />} />
               <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} exact />
+              <Route path="/community" element={<ProtectedRoute element={<Community />} />} exact />
 
             </Routes>
           </Router>

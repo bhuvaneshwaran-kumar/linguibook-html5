@@ -21,6 +21,9 @@ function MenubarComponent(props) {
                             <NavListItem className={location.pathname === "/" && "active"}>
                                 <StyledLink to="/">Home</StyledLink>
                             </NavListItem>
+                            <NavListItem className={location.pathname === "/community " && "active"}>
+                                <StyledLink to="/community">Community</StyledLink>
+                            </NavListItem>
                         </>
                     )
                 }

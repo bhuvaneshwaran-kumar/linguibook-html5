@@ -3,6 +3,7 @@ import { connect } from "react-redux"
 import ContextComponent from '../components/ContextComponent'
 import styled from 'styled-components';
 import VocabularyComponent from '../components/VocabularyComponent';
+import LLMBotComponent from '../components/LLMBotComponent';
 
 const HomeWrapper = styled.div`
   height: calc(100vh - 7vh);
@@ -18,6 +19,7 @@ function Home(props) {
     <HomeWrapper>
       <ContextComponent activeContextId={activeContextId} contextMapData={contextMapData} />
       <VocabularyComponent vocabularies={vocabularies} activeContextId={activeContextId} />
+      <LLMBotComponent />
     </HomeWrapper>
   )
 }
