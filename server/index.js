@@ -8,6 +8,7 @@ const app = express();
 const { PORT, DB_URL } = process.env;
 const authRoutes = require("./routes/auth")
 const ctxtVocRoutes = require("./routes/ctxtVoc")
+const genRoutes = require("./routes/generate")
 
 const startApp = async () => {
   try {
@@ -23,6 +24,7 @@ const startApp = async () => {
 
       app.use("/api/auth", authRoutes);
       app.use("/api/project", ctxtVocRoutes);
+      app.use("/api/ai", genRoutes);
 
       app.listen(PORT, () => console.log(`Server is listening at http://localhost:${PORT}`));
     } else {

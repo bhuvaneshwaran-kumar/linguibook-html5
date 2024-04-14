@@ -1,5 +1,4 @@
-import { axiosInstance as axios, axiosWithAuthToken as authAxios } from '../utils/interceptors';
-import * as fetch_axios from "axios"; // axios without interceptors
+import { axiosInstance as axios } from '../utils/interceptors';
 import { updateAppLoad, updateContextData, updateUserAuth, updateUserData, updateVocabularies } from '../actions';
 import { setAccessToken } from '../utils/token';
 import { getContextDetials, getVocDetials } from './ctxtVoc';

@@ -44,6 +44,9 @@ function MenubarComponent(props) {
                         </>
                     ) : (
                             <>
+                                <NavListItem className={"active"}>
+                                    <StyledLink>{props.userDet.get("name")}</StyledLink>
+                                </NavListItem>
                                 <NavListItem className={location.pathname === "/profile" && "active"}>
                                     <StyledLink to="/profile">Profile</StyledLink>
                                 </NavListItem>
@@ -60,7 +63,7 @@ function MenubarComponent(props) {
 }
 
 const mapStateToProps = (state) => ({
-    userDet: state.localStorage.user,
+    userDet: state.localStorage.get('user'),
     isAuthenticated: state.localStorage.getIn(["auth", "isLogged"])
 });
 

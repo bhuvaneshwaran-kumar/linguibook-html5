@@ -64,6 +64,7 @@ const CardContainer = styled.div`
         padding: 7px 3px;
         border-radius: 4px;
         background: #658daf;
+        user-select: none;
       }
       &.term {
         height: 60px;
@@ -150,7 +151,7 @@ function VocabularyComponent(props) {
           <div className='voc-card-mid'>
             <div className="term row">
               <div className="lft">Term</div>
-              <div className="rgt">{vocab.get("term")}</div>
+              <div className="rgt aprove-ai">{vocab.get("term")}</div>
             </div>
             <div className="meaning row">
               <div className="lft">meaning</div>

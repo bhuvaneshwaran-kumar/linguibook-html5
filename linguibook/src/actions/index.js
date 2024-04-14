@@ -31,8 +31,13 @@ export const updateContextData = (data) => ({
  * @param {boolean} data.isVocLoading 
  * @returns 
  */
-export const setVocLoader = (data) => ({
-    type: "SET_VOC_LOADER",
+export const setLoader = (data) => ({
+    type: "SET_LOADER",
+    data
+})
+
+export const setAiUsrMsgSugg = (data) => ({
+    type: "SET_AI_USER_MSG_SUGG",
     data
 })
 
@@ -43,6 +48,11 @@ export const updateVocabularies = (data) => ({
 
 export const setVocabularies = (data) => ({
     type: "SET_VOCABULARIES",
+    data
+})
+
+export const updateAiConvo = data => ({
+    type: "UPDATE_AI_CONVO",
     data
 })
 

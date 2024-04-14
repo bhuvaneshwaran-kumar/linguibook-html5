@@ -14,6 +14,9 @@ const initialState = fromJS({
         isLogged: false,
         isLoading: false
     },
+    aiConvo: [{ from: "ai", msg: "Hi I'm LinguiBook Your learning assistant, How can I help you today?" }],
+    isAiMsgLoading: false,
+    aiUserMsgSugg: "",
     isVocChunkLoad: false,
     isVocLoading: false
 })
@@ -35,14 +38,25 @@ const localStorage = (state = initialState, action) => {
             state = state.update("auth", (authData) => authData.merge({ isLogged, isLoading }));
             return state;
         }
-        case "SET_VOC_LOADER": {
-            const { isVocChunkLoad, isVocLoading } = action.data;
+        case "SET_LOADER": {
+            const { isVocChunkLoad, isVocLoading, isAiMsgLoading } = action.data;
             if (isVocChunkLoad !== undefined) { 
                 state = state.set("isVocChunkLoad", isVocChunkLoad);
             } 
             if (isVocLoading !== undefined) { 
                 state = state.set("isVocLoading", isVocLoading);
             } 
+            if (isAiMsgLoading !== undefined) { 
+                state = state.set("isAiMsgLoading", isAiMsgLoading);
+            } 
+            return state;
+        }
+        case "UPDATE_AI_CONVO": {
+            state = state.update("aiConvo", (convo) => convo.push(fromJS(action.data)));
+            return state;
+        }
+        case "SET_AI_USER_MSG_SUGG": { 
+            state = state.set("aiUserMsgSugg", action.data);
             return state;
         }
         default : 

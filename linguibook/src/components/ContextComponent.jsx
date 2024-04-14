@@ -16,7 +16,7 @@ const ContextWraper = styled.div`
 `
 
 const ContextListWrap = styled.div`
-    height: 78%;
+    height: 84%;
     overflow-y: scroll;
     scroll-behavior: smooth;
     padding: 4px;
@@ -43,7 +43,7 @@ const ContextListWrap = styled.div`
 `
 
 const ContextFilterWrap = styled.div`
-    height: 22%;
+    height: 15%;
     padding: 4px;
     display: flex;
     flex-direction: column;
@@ -128,10 +128,10 @@ function ContextComponent(props) {
                 <div className='row title'>
                     <p>{contextMapData.getIn([activeContextId, "value"])}</p>
                 </div>
-                <div className='row input'>
+                {/* <div className='row input'>
                     <input type="text" placeholder={"Search Vocabularies"} />
                     <Image src='/images/search.svg' width={"24px"} height={"24px"} />
-                </div>
+                </div> */}
                 <div className='row input'>
                     <input value={filter} type="text" placeholder={"Filter Contexts"} onChange={filterChange}/>
                     <Image src={filter.trim() !== '' ? '/images/filter-cancel.svg' : '/images/filter.svg'} width={"24px"} height={"24px"} onClick={() => setFilter("")} />

@@ -1,6 +1,6 @@
-import { setVocLoader, setVocabularies, updateVocabularies } from "../actions";
+import { setLoader, setVocabularies, updateVocabularies } from "../actions";
 import { axiosWithAuthToken as authAxios } from "../utils/interceptors"
-import { Map, OrderedMap, fromJS } from "immutable"
+import { Map, OrderedMap } from "immutable"
 import { wait } from "./auth";
 export const getContextDetials = async (params = {}) => {
     let headers = {};
@@ -38,7 +38,7 @@ export const loadVocData = (payload = {}) => {
     return async (dispatch) => {
         try {
             const { size } = payload;
-            await dispatch(setVocLoader({ isVocChunkLoad: true }));
+            await dispatch(setLoader({ isVocChunkLoad: true }));
             await wait(700);
             const { vocabularies } = await getVocDetials(payload);
             await dispatch(updateVocabularies({ vocabularies }));
@@ -46,7 +46,7 @@ export const loadVocData = (payload = {}) => {
         } catch (error) {
             return { error: true };
         } finally {
-            await dispatch(setVocLoader({ isVocChunkLoad: false }));
+            await dispatch(setLoader({ isVocChunkLoad: false }));
         }
     };
 };
@@ -54,7 +54,7 @@ export const loadVocData = (payload = {}) => {
 export const loadCtxtVocData = (contextId) => {
     return async (dispatch) => {
         try {
-            await dispatch(setVocLoader({ isVocLoading: true }));
+            await dispatch(setLoader({ isVocLoading: true }));
             await wait(700);
             const { vocabularies } = await getVocDetials({ contextId });
             if (!vocabularies || !vocabularies.size) { throw new Error("no data found in the context") }
@@ -62,7 +62,7 @@ export const loadCtxtVocData = (contextId) => {
         } catch (err) {
             // handle error message
         } finally {
-            await dispatch(setVocLoader({ isVocLoading: false }));
+            await dispatch(setLoader({ isVocLoading: false }));
         }
     }
 }
