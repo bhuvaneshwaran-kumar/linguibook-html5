@@ -8,16 +8,16 @@ export const fetchRefreshToken = async () => {
     const { accessToken, user } = response.data.data;
     setAccessToken(accessToken);
     return { user, token: accessToken }
-}  
+}
 
 /** @Note remove when its no longer needed */
 export function wait(duration) {
     return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(); // Resolve the Promise after the specified duration
-      }, duration);
+        setTimeout(() => {
+            resolve(); // Resolve the Promise after the specified duration
+        }, duration);
     });
-  }
+}
 
 // thunk action creator
 export const checkUserAuth = () => {
@@ -26,11 +26,11 @@ export const checkUserAuth = () => {
             await dispatch(updateUserAuth({ isLogged: false, isLoading: true }));
             await wait(500);
             const { user } = await fetchRefreshToken();
-            const { activeContextId, contextData } = await getContextDetials();
-            const { vocabularies } = await getVocDetials({ contextId: activeContextId });
+            // const { activeContextId, contextData } = await getContextDetials();
+            // const { vocabularies } = await getVocDetials({ contextId: activeContextId });
 
-            await dispatch(updateContextData({ id: activeContextId, data: contextData }));
-            await dispatch(updateVocabularies({ vocabularies }));
+            // await dispatch(updateContextData({ id: activeContextId, data: contextData }));
+            // await dispatch(updateVocabularies({ vocabularies }));
 
             await dispatch(updateUserData(user));
             await dispatch(updateUserAuth({ isLogged: true, isLoading: false }));
@@ -52,11 +52,11 @@ export const handleLogin = (userName, password) => {
             const response = await axios.post(`/api/auth/login`, { userName, password });
             const { accessToken, user } = response.data.data;
             setAccessToken(accessToken);
-            const { activeContextId, contextData } = await getContextDetials();
-            const { vocabularies } = await getVocDetials({ contextId: activeContextId });
+            // const { activeContextId, contextData } = await getContextDetials();
+            // const { vocabularies } = await getVocDetials({ contextId: activeContextId });
 
-            await dispatch(updateContextData({ id: activeContextId, data: contextData }));
-            await dispatch(updateVocabularies({ vocabularies }));
+            // await dispatch(updateContextData({ id: activeContextId, data: contextData }));
+            // await dispatch(updateVocabularies({ vocabularies }));
             await dispatch(updateUserData(user));
             await dispatch(updateUserAuth({ isLogged: true, isLoading: false }));
             return true;

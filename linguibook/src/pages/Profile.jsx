@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import { updateProfile } from "../thunk/profile";
+import ContentEditable from "../components/contentEditable"
 
 const ProfileOuter = styled.div`
   width: 100vw;
@@ -120,10 +119,6 @@ const profileImgs = Array.from(
   { length: 13 },
   (_, index) => `${index + 1}.png`
 );
-const toolbarOptions = [
-  ["bold", "italic", "underline", { color: [] }, { background: [] }],
-];
-const modules = { module: { toolbar: toolbarOptions } };
 
 function Profile(props) {
   const [internalBio, setInternalBio] = useState(props.userDet.get("bio"));
@@ -133,14 +128,15 @@ function Profile(props) {
   const [userId, setUserId] = useState(props.userDet.get("_id"));
   const [allowUpdate, setAllowUpdate] = useState(false);
 
-  const bioEditRef = useRef(null);
-
-  const handleEditor = () => {
-    props.dispatchUpdateProfile(internalProfileUrl, internalBio, userId);
+  const handleBioContent = (data) => {
+    setInternalBio(data)
   };
 
+  const handleBioUpdate = () => {
+    props.dispatchUpdateProfile(internalProfileUrl, internalBio, userId);
+  }
+
   useEffect(() => {
-   
     if (
       props.userDet.get("bio") !== internalBio ||
       props.userDet.get("profileUrl") !== internalProfileUrl
@@ -150,6 +146,7 @@ function Profile(props) {
       setAllowUpdate(false);
     }
   }, [props.userDet, internalBio, internalProfileUrl]);
+
 
   return (
     <ProfileOuter>
@@ -185,23 +182,7 @@ function Profile(props) {
             Hello{" "}
             <span className="active-clr">{props.userDet.get("name")}</span>{" "}
           </h1>
-          <div className="bioEditor">
-            <div className="edit-elm" ref={bioEditRef}>
-              <ReactQuill
-                modules={modules?.module}
-                theme="snow"
-                value={internalBio}
-                onChange={(content) => setInternalBio(content)}
-                placeholder="Write here..."
-              />
-            </div>
-            <button
-              className={`btn-style ${!allowUpdate ? "disable" : ""}`}
-              onClick={handleEditor}
-            >
-              Update
-            </button>
-          </div>
+          <ContentEditable setDisplayMessage={handleBioContent} btnVisibile={allowUpdate} onUpdateClick={handleBioUpdate} displayMessage={internalBio} />
         </ProfileInnerRight>
       </ProfileInner>
     </ProfileOuter>
@@ -214,7 +195,8 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   dispatchUpdateProfile: (profileUrl, bio, userId) =>
-    dispatch(updateProfile(profileUrl, bio, userId)),
+    dispatch(updateProfile(profileUrl, bio, userId))
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

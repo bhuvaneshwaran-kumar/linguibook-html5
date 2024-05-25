@@ -128,7 +128,6 @@ export function Auth() {
 
         if (pageDet === PAGE.SIGN_UP.value) {
             const result = await dispatch(handleSignUp(userName, password));
-            console.log(result, "result");
             if (result) { 
                 setMessage({ error: false, data: "Account created successfully!." })
                 navigate(`/auth/${PAGE.LOG_IN.value}`, { replace: true });
@@ -138,7 +137,6 @@ export function Auth() {
             }
         } else { 
             const result = await dispatch(handleLogin(userName, password));
-            console.log(result,"result");
             if (result) { 
                 setMessage({ error: false, data: "logged in successfully.!" });
                 navigate(`/`, { replace: true });

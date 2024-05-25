@@ -22,8 +22,8 @@ export const NavBar = styled.div`
     background: #5151ac;
     color: white;
     user-select: none;
-    height: 7vh;
-` 
+    height: 5vh;
+`
 
 export const NavLeft = styled.div`
     display: flex;
@@ -47,6 +47,6 @@ export const StyledLink = styled(Link)`
         color: ${props => props.color || 'white'};
         text-decoration: none;
     }
-` 
+`
 
 export const NavRight = styled(NavLeft)``

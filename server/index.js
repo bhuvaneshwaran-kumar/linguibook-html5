@@ -17,6 +17,7 @@ const startApp = async () => {
     if (dbStatus) {
       const collections = await mongoose.connection.db.listCollections().toArray();
       let CORS_ORIGINS = CORS_ORIGIN.split(' ');
+      console.log(CORS_ORIGINS, "CORS_ORIGINS")
       app.use(cors({ origin: CORS_ORIGINS, credentials: true }));
 
       app.use(cookieParser());
