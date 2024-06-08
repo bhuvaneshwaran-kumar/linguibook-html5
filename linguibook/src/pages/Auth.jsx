@@ -113,34 +113,37 @@ export function Auth() {
     const userNameRef = useRef(null);
     const passwordRef = useRef(null);
     const [message, setMessage] = useState({ error: false, data: "" })
+    const [passcode, setPasscode] = useState("");
+    const [minLengthError, setMinLengthError] = useState(false);
+    const [specialCharError, setSpecialCharError] = useState(false);
 
     const handleTabSwitch = (tab) => {
         navigate(`/auth/${tab}`, { replace: true });
     }
 
-    const handleSubmit = async () => { 
+    const handleSubmit = async () => {
         const userName = userNameRef.current.value;
         const password = passwordRef.current.value;
 
-        if (!userName.trim().length || !password.trim().length) { 
-           return setMessage({ error: true, data: "user name and password can't be empty." })
+        if (!userName.trim().length || !password.trim().length) {
+            return setMessage({ error: true, data: "user name and password can't be empty." })
         }
 
         if (pageDet === PAGE.SIGN_UP.value) {
             const result = await dispatch(handleSignUp(userName, password));
-            if (result) { 
+            if (result) {
                 setMessage({ error: false, data: "Account created successfully!." })
                 navigate(`/auth/${PAGE.LOG_IN.value}`, { replace: true });
                 passwordRef.current.value = "";
-            } else { 
+            } else {
                 setMessage({ error: true, data: "User name already exit." })
             }
-        } else { 
+        } else {
             const result = await dispatch(handleLogin(userName, password));
-            if (result) { 
+            if (result) {
                 setMessage({ error: false, data: "logged in successfully.!" });
                 navigate(`/`, { replace: true });
-            } else { 
+            } else {
                 setMessage({ error: true, data: "username and password dose'nt match" });
             }
         }
@@ -152,6 +155,14 @@ export function Auth() {
         submitText = PAGE.SIGN_UP.submit;
         isLogIn = false;
     }
+
+    const handlePasswordChange = (event) => {
+        const newPasscode = event.target.value;
+        setPasscode(newPasscode);
+        const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+        setMinLengthError(newPasscode.length < 8);
+        setSpecialCharError(!specialChars.test(newPasscode));
+    };
 
     return (
         <AuthWrapper>
@@ -166,7 +177,7 @@ export function Auth() {
                 </div>
                 <div className="field">
                     <p>Password :</p>
-                    <input ref={passwordRef} placeholder="Enter your Password" type="password" />
+                    <input ref={passwordRef} placeholder="Enter your Password" type="password" onChange={(event) => handlePasswordChange(event)} />
                 </div>
                 <div className="field">
                     <div className="auth-submit" onClick={handleSubmit}>{submitText}</div>
@@ -174,7 +185,18 @@ export function Auth() {
                 <div className="field msg">
                     <p>Note!.</p>
                     <ul>
-                        {warnMessage}
+                        {/* {warnMessage} */}
+                        {pageDet === PAGE.SIGN_UP.value ? PAGE.SIGN_UP.warn.map((item, index) => (
+                            <li
+                                key={item.key}
+                                style={{
+                                    color: (index === 0 && minLengthError) || (index === 1 && specialCharError) ? 'red' :
+                                        (index === 0 && !minLengthError) || (index === 1 && !specialCharError) ? 'green' : 'black'
+                                }}
+                            >
+                                {item}
+                            </li>
+                        )) : pageDet === PAGE.LOG_IN.value ? PAGE.LOG_IN.warn : ""}
                     </ul>
                 </div>
                 {
