@@ -31,8 +31,10 @@ export default ({ children }) => {
 
         socket.on("updateVocabDataComplete", (data) => { 
             if (userId !== data.userId) { 
-                data.likesCount = data.isLiked ? 1 : -1;
-                delete data.isLiked
+                if (data.isLiked !== undefined) { 
+                    data.likesCount = data.isLiked ? 1 : -1;
+                    delete data.isLiked    
+                }
             }
             dispatch(updateVocabDataComplete(data))
         })

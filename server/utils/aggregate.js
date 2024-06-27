@@ -26,7 +26,21 @@ const getVoc = (contextId, from, size, userId) => {
             then: { $in: [userId, "$likes"] }, // Replace "<userId>" with the user ID you want to check
             else: false
           }
-        }
+        },
+        commentsCount: {
+          $cond: {
+            if: { $isArray: "$comments" },
+            then: { $size: "$comments" },
+            else: 0
+          }
+        },
+        comments: {
+          $cond: {
+            if: { $isArray: "$comments" },
+            then: { $slice: ["$comments", 5] },
+            else: []
+          }
+        },
       }
     },
     {
@@ -40,7 +54,9 @@ const getVoc = (contextId, from, size, userId) => {
               meaning: "$meaning",
               relmEg: "$relmEg",
               likesCount: "$likesCount",
-              isLiked: "$isLiked"
+              isLiked: "$isLiked",
+              commentsCount: "$commentsCount",
+              comments: "$comments"
             }
           }
         }

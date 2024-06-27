@@ -76,4 +76,24 @@ const updateLike = async (data) => {
     }
 }
 
-module.exports = { Router, updateLike }
+const updateComment = async (data) => { 
+    const { vocabId, commentData } = data;
+    try {
+        let updatedVocabulary;
+        if (commentData !== undefined) {
+            updatedVocabulary = await Vocabulary.findByIdAndUpdate(
+                vocabId,
+                { $push: { comments: commentData } }, // $addToSet ensures no duplicate userIds
+                { new: true }
+            );
+        } 
+        if (!updatedVocabulary) {
+            throw new Error('Vocabulary not found');
+        }
+        return updatedVocabulary;
+    } catch (error) {
+        throw error;
+    }
+}
+
+module.exports = { Router, updateLike, updateComment }

@@ -17,11 +17,7 @@ const vocSchema = new Schema(
                 userID: String,
                 userName: String,
                 comment: String,
-                replyComment: [{
-                    userID: String,
-                    userName: String,
-                    comment: String,
-                }]
+                profileUrl: String
             }],
             default: []
         }

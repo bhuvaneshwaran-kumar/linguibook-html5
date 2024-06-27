@@ -1,6 +1,6 @@
 const socketIo = require("socket.io");
 const { CORS_ORIGIN } = require("../constants");
-const { updateLike } = require("../routes/ctxtVoc");
+const { updateLike, updateComment } = require("../routes/ctxtVoc");
 let CORS_ORIGINS = CORS_ORIGIN.split(' ');
 
 function connectSocket(server) {
@@ -29,11 +29,16 @@ function connectSocket(server) {
         })
         
         socket.on("updateVocabData", async (data) => { 
-            const { ctxId } = data;
+            const { ctxId, isLiked, commentData } = data;
             socket.broadcast.to(ctxId).emit("updateVocabDataComplete",data);
 
             try{
-                await updateLike(data);
+                if (isLiked !== undefined) { 
+                    await updateLike(data);
+                }
+                if (commentData !== undefined) { 
+                    await updateComment(data);
+                }
             } catch (err) { 
                 // throw error autoSaveException
             }
