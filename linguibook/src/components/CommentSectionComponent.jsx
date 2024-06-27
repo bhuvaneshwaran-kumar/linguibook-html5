@@ -15,6 +15,7 @@ const CommentOuter = styled.div`
     & > .top {
         display: flex;
         flex-direction: column;
+        align-items: center;
         min-height: 80px;
         max-height: 160px;
         overflow: scroll;
@@ -24,6 +25,7 @@ const CommentOuter = styled.div`
             padding: 2px 2px 5px 2px;
             position: relative;
             font-size: small;
+            width: 100%;
             &::after {
                 position: absolute;
                 content: "";
@@ -76,20 +78,6 @@ const CommentOuter = styled.div`
 const toolbarOptions = [['bold', 'italic', 'underline', { 'color': [] }, { 'background': [] }]]
 const modules = { module: { toolbar: toolbarOptions } }
 
-
-const comments = [{
-    userId: 123,
-    name:"bhuvan",
-    profileUrl: '1.png',
-    comment: `cmtValue cmtValue cmtValue cmtValue cmtValue cmtValue cmtValue cmtValue `
-},
-{
-    userId: 123,
-    name:"bhuvan 2",
-    profileUrl: '2.png',
-    comment: `cmtValue cmtValue cmtValue cmtValue cmtValue cmtValue cmtValue cmtValue cmtValue cmtValue cmtValue cmtValue `
-}]
-
 function CommentSectionComponent(props) {
     const [cmtValue, setCmtValue] = useState("");
 
@@ -108,7 +96,7 @@ function CommentSectionComponent(props) {
         setCmtValue("")
     }
 
-    const commentsElem = props.comments.map(comment => (
+    const commentsElem = props.comments.size ? props.comments.map(comment => (
         <div className='cmt-row'>
             <div className="cmt-tp">
                 <img src={`/images/profile/${comment.get('profileUrl')}`} alt="" />
@@ -116,7 +104,7 @@ function CommentSectionComponent(props) {
             </div>
             <div className="cmt-btm" dangerouslySetInnerHTML={{ __html: comment.get('comment') }}></div>
         </div>
-    )) 
+    )) : "no comments made in the vocabulary"
 
 
   return (
