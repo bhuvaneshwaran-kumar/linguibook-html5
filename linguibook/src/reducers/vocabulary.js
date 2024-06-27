@@ -29,8 +29,14 @@ const vocabulariesStorage = (state = initialState, action) => {
             return state;
         }
         case "UPDATE_VOCAB_DATA_COMPLETE": {
-            const { isLiked, userId, vocabId } = action.data;
-            state = state.setIn(["vocabularies", vocabId, "isLiked"], isLiked);
+            const { isLiked, userId, vocabId, likesCount } = action.data;
+            if (isLiked !== undefined) { 
+                state = state.setIn(["vocabularies", vocabId, "isLiked"], isLiked);
+                state = state.updateIn(["vocabularies", vocabId, "likesCount"], (value) => isLiked ? value + 1 : value - 1);
+            }
+            if (likesCount !== undefined) { 
+                state = state.updateIn(["vocabularies", vocabId, "likesCount"], (value) => value + likesCount);
+            }
             return state;
         }
         default : 

@@ -122,7 +122,7 @@ function VocabularyComponent(props) {
   }
 
   const handleLikeClick = (isLiked, vocabId) => { 
-    props.updateVocabData({ isLiked, vocabId });
+    props.updateVocabData({ isLiked, vocabId, ctxId: props.ctxId });
   }
 
   const lastElementRef = useCallback((node) => {
@@ -164,6 +164,7 @@ function VocabularyComponent(props) {
           </div>
           <div className="voc-btm" ref={(index + 1 === vocabularies.size) ? lastElementRef : null}>
             <img src={`/images/post/${vocab.get("isLiked") ? 'like-active' : 'like'}.png`} alt='like' onClick={() => handleLikeClick(!vocab.get("isLiked"), key)} />
+            <span>{vocab.get("likesCount")} likes</span>
             <img src='/images/post/comment.png' alt='comment' />
           </div>
         </CardContainer>
@@ -192,6 +193,7 @@ function VocabularyComponent(props) {
 const mapStateToProps = (state, ownProps) => ({
   isVocChunkLoad: state.localStorage.get("isVocChunkLoad"),
   isVocLoading: state.localStorage.get("isVocLoading"),
+  ctxId: state.vocabulariesStorage.getIn(["context", "id"]),
 })
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

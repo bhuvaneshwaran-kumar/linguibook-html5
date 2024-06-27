@@ -24,6 +24,11 @@ export const updateContextData = (data) => ({
     data
 })
 
+export const setSocketStatus = (data) => ({
+    type: "SET_SOCKET_STATUS",
+    data
+})
+
 /**
  * 
  * @param {object} data 

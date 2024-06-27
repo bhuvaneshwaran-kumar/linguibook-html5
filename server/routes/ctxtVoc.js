@@ -30,7 +30,7 @@ Router.post('/getVoc', isAuthenticated, async (req, res) => {
     try {
         const { body, user } = req;
         const { contextId, from, size } = body;
-        let result = await Vocabulary.aggregate(getVoc(contextId, from, size));
+        let result = await Vocabulary.aggregate(getVoc(contextId, from, size, user._id));
         return res.status(200).json({
             ok: true,
             data: { vocabularies: result[0] }
@@ -43,7 +43,37 @@ Router.post('/getVoc', isAuthenticated, async (req, res) => {
     }
 })
 
+const updateLike = async (data) => { 
+    const { isLiked, vocabId, userId } = data;
 
+    try {
+        let updatedVocabulary;
 
+        if (isLiked) {
+            // Add userId to likes array if not already present
+            updatedVocabulary = await Vocabulary.findByIdAndUpdate(
+                vocabId,
+                { $addToSet: { likes: userId } }, // $addToSet ensures no duplicate userIds
+                { new: true }
+            );
+        } else {
+            // Remove userId from likes array
+            updatedVocabulary = await Vocabulary.findByIdAndUpdate(
+                vocabId,
+                { $pull: { likes: userId } },
+                { new: true }
+            );
+        }
 
-module.exports = Router
+        if (!updatedVocabulary) {
+            throw new Error('Vocabulary not found');
+        }
+
+        return updatedVocabulary;
+    } catch (error) {
+        console.error("Error updating vocabulary likes:", error.message);
+        throw error;
+    }
+}
+
+module.exports = { Router, updateLike }

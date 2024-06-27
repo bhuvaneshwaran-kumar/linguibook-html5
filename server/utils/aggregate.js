@@ -1,4 +1,4 @@
-const getVoc = (contextId, from, size) => {
+const getVoc = (contextId, from, size, userId) => {
   return [
     {
       $match: {
@@ -23,7 +23,7 @@ const getVoc = (contextId, from, size) => {
         isLiked: {
           $cond: {
             if: { $isArray: "$likes" },
-            then: { $in: ["<userId>", "$likes"] }, // Replace "<userId>" with the user ID you want to check
+            then: { $in: [userId, "$likes"] }, // Replace "<userId>" with the user ID you want to check
             else: false
           }
         }
