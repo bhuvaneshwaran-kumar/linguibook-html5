@@ -54,20 +54,25 @@ export const getCommunities = (payload = {}, of = "both") => {
 
             if (of === "both" || of === "users") { 
                 const resp = await getUserCommunities(payload); 
-                const communites = resp.resp.data.communites[0];
-                type = "userCommunites";
-                id = Object.keys(communites)[0]            
-                await dispatch(updateUserCommunity(OrderedMap(fromJS(communites))));
+                const communites = resp.resp.data.communites;
+                if (communites.length) {
+                    type = "userCommunites";
+                    id = Object.keys(communites[0])[0];
+                    await dispatch(updateUserCommunity(OrderedMap(fromJS(communites[0]))));
+                }
             }
 
             if (of === "both" || of === "others") { 
                 const resp = await getOtherCommunities(payload);
-                const communites = resp.resp.data.communites[0];   
-                if (!type || !id) { 
-                    id = Object.keys(communites)[0]
-                    type = "otherCommunites"
+                const communites = resp.resp.data.communites;
+                if (communites.length) {
+                    if (!type || !id) {
+                        id = Object.keys(communites[0])[0]
+                        type = "otherCommunites"
+                    }
+                    await dispatch(updateOtherCommunity(OrderedMap(fromJS(communites[0]))));
                 }
-                await dispatch(updateOtherCommunity(OrderedMap(fromJS(communites))));
+
             }
             if (type && id) { 
                 // await dispatch(setActiveCommunity({ id, type }));
