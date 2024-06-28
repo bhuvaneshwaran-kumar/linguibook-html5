@@ -120,4 +120,43 @@ const ctxtAggregate = [
   }
 ];
 
-module.exports = { getVoc, ctxtAggregate }
+const communityAggregate = [
+  {
+    $project: {
+      _id: { $toString: "$_id" }, // Convert ObjectId to string
+      name: 1,
+      description: 1,
+      adminId: 1,
+      adminName: 1,
+      profileUrl: 1,
+      adminProfileUrl: 1,
+      members: 1
+    }
+  },
+  {
+    $group: {
+      _id: null,
+      communities: {
+        $push: {
+          k: "$_id",
+          v: {
+            name: "$name",
+            description: "$description",
+            adminId: "$adminId",
+            adminName: "$adminName",
+            profileUrl: "$profileUrl",
+            adminProfileUrl: "$adminProfileUrl",
+            members: "$members"
+          }
+        }
+      }
+    }
+  },
+  {
+    $replaceRoot: {
+      newRoot: { $arrayToObject: "$communities" }
+    }
+  }
+]
+
+module.exports = { getVoc, ctxtAggregate, communityAggregate }

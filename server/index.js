@@ -8,6 +8,8 @@ const app = express();
 const { PORT, DB_URL } = process.env;
 const authRoutes = require("./routes/auth")
 const { Router: ctxtVocRoutes } = require("./routes/ctxtVoc")
+const { Router: communityRoutes } = require("./routes/community.js")
+const profileRoutes = require("./routes/profile");
 const genRoutes = require("./routes/generate");
 const { connectSocket } = require("./socketAction.js");
 
@@ -24,7 +26,9 @@ const startApp = async () => {
 
       app.use("/api/auth", authRoutes);
       app.use("/api/project", ctxtVocRoutes);
+      app.use("/api/community", communityRoutes);
       app.use("/api/ai", genRoutes);
+      app.use("/api/profile", profileRoutes);
 
       const server = app.listen(PORT, () => console.log(`Server is listening at http://localhost:${PORT}`));
       connectSocket(server);      

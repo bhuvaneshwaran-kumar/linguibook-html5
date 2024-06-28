@@ -41,6 +41,31 @@ export const setLoader = (data) => ({
     data
 })
 
+export const updateCommunityLoad = (data) => ({
+    type: "UPDATE_COMMUNITY_LOAD",
+    data
+})
+
+export const updateUserCommunity = (data) => ({
+    type: "UPDATE_USER_COMMUNITY",
+    data
+})
+
+export const updateOtherCommunity = (data) => ({
+    type: "UPDATE_OTHER_COMMUNITY",
+    data
+})
+
+export const setActiveCommunity = (data) => ({
+    type: "SET_ACTIVE_COMMUNITY",
+    data
+})
+
+export const setActiveCommunityComplete = (data) => ({
+    type: "SET_ACTIVE_COMMUNITY_COMPLETE",
+    data
+})
+
 export const setAiUsrMsgSugg = (data) => ({
     type: "SET_AI_USER_MSG_SUGG",
     data

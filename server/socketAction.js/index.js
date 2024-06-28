@@ -27,6 +27,16 @@ function connectSocket(server) {
             const { ctxId } = data;
             socket.leave(ctxId);
         })
+
+        socket.on("joinRoom", (data) => { 
+            const { roomId } = data;
+            socket.join(roomId);
+        })
+
+        socket.on("leaveRoom", (data) => { 
+            const { roomId } = data;
+            socket.leave(roomId);
+        })
         
         socket.on("updateVocabData", async (data) => { 
             const { ctxId, isLiked, commentData } = data;

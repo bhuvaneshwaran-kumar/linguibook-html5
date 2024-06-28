@@ -91,7 +91,7 @@ const CardContainer = styled.div`
   }
 `
 
-const CenterLoader = styled.div`
+export const CenterLoader = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
