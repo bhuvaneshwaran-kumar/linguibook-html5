@@ -51,6 +51,16 @@ export const updateUserCommunity = (data) => ({
     data
 })
 
+export const updateJoinCommunity = (data) => ({
+    type : "UPDATE_JOIN_COMMUNITY",
+    data
+})
+
+export const updateJoinCommunityComplete = (data) => ({
+    type: "UPDATE_JOIN_COMMUNITY_Complete",
+    data
+})
+
 export const updateOtherCommunity = (data) => ({
     type: "UPDATE_OTHER_COMMUNITY",
     data

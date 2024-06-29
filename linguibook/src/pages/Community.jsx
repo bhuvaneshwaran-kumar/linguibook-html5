@@ -1,11 +1,12 @@
-import React, { useReducer, useRef, useState } from 'react'
+import React, { useEffect, useReducer, useRef, useState } from 'react'
 import ReactQuill from 'react-quill'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
-import { changeCommunity, createCommunity } from '../thunk/community'
+import { changeCommunity, createCommunity, joinCommunity } from '../thunk/community'
 import { CenterLoader } from '../components/VocabularyComponent'
 import { Image } from '../styles/style'
 import { setActiveCommunity } from '../actions'
+import { fromJS } from 'immutable'
 
 const CommunityOuter = styled.div`
   width: 100vw;
@@ -120,9 +121,13 @@ const CommunityInnerRight = styled.div`
     }
   }
   & > .post {
+    &.ViewCommunity{
+      justify-content: center;
+      gap: 10px;
+    }
     & > .header {
       width: 90%;
-      margin: auto;
+      margin: 0 auto;
       padding: 4px;
       background: #c4e0f9;
       border-radius: 4px;
@@ -135,7 +140,7 @@ const CommunityInnerRight = styled.div`
     padding-bottom: 5px;
     & > .content {
       width: 90%;
-      margin: auto;
+      margin: 0 auto;
       white-space: pre-wrap;
     }
   }
@@ -212,31 +217,6 @@ const FormOuter = styled.div`
     }
     
 `
-const educationCommunities = [
-  "LearnHub",
-  "STEM Squad",
-  "Language Lab",
-  "Tech Titans",
-  "WriteWave",
-  "MathMinds",
-  "SciFi Club",
-  "LitChat",
-  "History Hive",
-  "ArtZone",
-  "EdConnect",
-];
-
-const exploreCommunities = [
-  "BrainBox",
-  "StudyCrew",
-  "Academy Alley",
-  "SkillSwap",
-  "GeniusGuild",
-  "BookBuds",
-  "TeachTribe",
-  "LearnLinx",
-  "MasteryMingle"
-]
 
 const toolbarOptions = [['bold', 'italic', 'underline', { 'color': [] }, { 'background': [] }]]
 const modules = { module: { toolbar: toolbarOptions } }
@@ -280,7 +260,7 @@ const CommunityForm = (props) => {
   return (
     <>
       <div className="header">
-        <p onClick={() => props.setRightView(RIGHT_VIEWS.communityPost)} className={`cr-pt`} tabIndex={1}>Go Prev</p>
+        {/* <p onClick={() => props.setRightView(RIGHT_VIEWS.communityPost)} className={`cr-pt`} tabIndex={1}>Go Prev</p> */}
         <p>create and organise your <span className='active-clr'>Community</span></p>
         <p onClick={handleCreateCommunity} className={`cr-pt ${preventCreate && "disabled"}`} tabIndex={1}>Create Community</p>
       </div>
@@ -347,6 +327,32 @@ const CommunityPost = (props) => {
   )
 }
 
+const ViewCommunity = (props) => {
+  const community = props.communityData;
+  
+  const handleJoinCommunity = () => { 
+    props.joinCommunity({ id: props.activeCommunity.get("id"), userId: props.userDet.get("_id"), userName: props.userDet.get("name"), profileUrl: props.userDet.get("profileUrl") });
+  }
+
+  return (
+    <>
+      <div className="header">
+        <p>Welcome to <span className='active-clr'>{community.get("name")}</span> Community</p>
+        <p className='cr-pt' tabIndex={1} onClick={handleJoinCommunity}>Join Community</p>
+      </div>
+      <div className='post ViewCommunity'>
+        <div className="header">
+          <p>this group is maintained by {community.get("adminName")}</p>
+        </div>
+        <pre className="content">
+          Description:
+          <div dangerouslySetInnerHTML={{ __html: community.get("description") }}></div>
+        </pre>
+      </div>
+    </>
+  )
+}
+
 const RIGHT_VIEWS = {
   createCommunity: 0,
   viewCommunity: 1,
@@ -354,17 +360,27 @@ const RIGHT_VIEWS = {
 }
 
 function Community(props) {
-  const [rightView, setRightView] = useState(RIGHT_VIEWS.communityPost)
+  const [rightView, setRightView] = useState(props.activeCommunity.get("id") === "" ? RIGHT_VIEWS.createCommunity : props.activeCommunity.get("type") === "otherCommunites" ? RIGHT_VIEWS.viewCommunity : RIGHT_VIEWS.createCommunity)
+  const [activeCommunityData, setActiveCommunityData] = useState(() => (props.activeCommunity.get("id") !== "" ? props[props.activeCommunity.get("type")].get(props.activeCommunity.get("id")) : fromJS({})))
+  const activeCommRef = useRef(null)
 
   const handleCommunityChanges = (id, type = "userCommunites") => { 
     if (id !== props.activeCommunity.get("id"))
       props.changeCommunity({ id, type })
-
-    let view = type === "userCommunites" ? RIGHT_VIEWS.communityPost : RIGHT_VIEWS.viewCommunity;
-    if (rightView !== view) { 
-      setRightView(view);
-    }
   }
+
+  useEffect(() => { 
+    if (props.activeCommunity.get("type") !== "") { 
+      let view = props.activeCommunity.get("type") === "userCommunites" ? RIGHT_VIEWS.communityPost : RIGHT_VIEWS.viewCommunity;
+      if (rightView !== view) { 
+        setRightView(view);
+      }
+      setActiveCommunityData(props[props.activeCommunity.get("type")].get(props.activeCommunity.get("id")));
+    }
+    if (activeCommRef.current instanceof HTMLElement) { 
+      activeCommRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  },[props.activeCommunity])
 
   return (
     <CommunityOuter>
@@ -377,12 +393,13 @@ function Community(props) {
             <h3 className='comm-head'>Your Community</h3>
             <div className="list">
               {
-                props.userCommunites.entrySeq().map(([key, value], index) => (
-                  <p onClick={() => handleCommunityChanges(key)} className={`${key === props.activeCommunity.get("id") ? "active" : ""}`}>
+                props.userCommunites.entrySeq().map(([key, value], index) => {
+                  const isActive = key === props.activeCommunity.get("id");
+                  return <p ref={isActive ? activeCommRef : null} onClick={() => handleCommunityChanges(key)} className={`${isActive ? "active" : ""}`}>
                     <img src={`images/community/${value.get("profileUrl")}`} />
                     {value.get("name")}
                   </p>
-                ))
+                })
               }
             </div>
           </div>
@@ -390,12 +407,13 @@ function Community(props) {
             <h3 className='comm-head'>Explore Community</h3>
             <div className="list">
               {
-                props.otherCommunites.entrySeq().map(([key, value], index) => (
-                  <p onClick={() => handleCommunityChanges(key, "otherCommunites")} className={`${key === props.activeCommunity.get("id") ? "active" : ""}`}>
+                props.otherCommunites.entrySeq().map(([key, value], index) => {
+                  const isActive = key === props.activeCommunity.get("id");
+                  return <p ref={isActive ? activeCommRef : null} onClick={() => handleCommunityChanges(key, "otherCommunites")} className={`${isActive ? "active" : ""}`}>
                     <img src={`images/community/${value.get("profileUrl")}`} />
                     {value.get("name")}
                   </p>
-                ))
+                })
               }
             </div>
           </div>
@@ -406,12 +424,17 @@ function Community(props) {
         <CommunityInnerRight>
           {
           rightView === RIGHT_VIEWS.communityPost && (
-              <CommunityPost />
+              <CommunityPost activeCommunity={props.activeCommunity} otherCommunites={props.otherCommunites} userCommunites={props.otherCommunites}/>
           ) 
           }
           {
             rightView === RIGHT_VIEWS.createCommunity && (
               <CommunityForm createCommunity={props.createCommunity} userDet={props.userDet} setRightView={setRightView} />
+            )
+          }
+          {
+            rightView === RIGHT_VIEWS.viewCommunity && (
+              <ViewCommunity activeCommunity={props.activeCommunity} communityData={activeCommunityData} joinCommunity={props.joinCommunity} userDet={props.userDet} />
             )
           }
         </CommunityInnerRight>
@@ -431,6 +454,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch, ownProps) => ({
   createCommunity: (payload) => dispatch(createCommunity(payload)),
   changeCommunity: (payload) => dispatch(changeCommunity(payload)),
+  joinCommunity: (payload) => dispatch(joinCommunity(payload)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Community)

@@ -1,4 +1,4 @@
-import { setActiveCommunityComplete, updateVocabDataComplete } from "../actions";
+import { setActiveCommunityComplete, updateJoinCommunityComplete, updateVocabDataComplete } from "../actions";
 import { sendSocketMessage } from "../socket";
 
 export const autosaveMiddleware = (store) => next => action => {
@@ -21,6 +21,11 @@ export const autosaveMiddleware = (store) => next => action => {
                 sendSocketMessage("joinRoom", { roomId: id });
             }
             store.dispatch(setActiveCommunityComplete(action.data));
+            break;
+        }
+        case "UPDATE_JOIN_COMMUNITY": {
+            sendSocketMessage("joinCommunity", action.data);
+            store.dispatch(updateJoinCommunityComplete(action.data));
             break;
         }
         default: 

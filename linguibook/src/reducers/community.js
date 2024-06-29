@@ -32,6 +32,14 @@ const communityStorage = (state = initialState, action) => {
             state = state.update("otherCommunites", (community) => community.merge(action.data));
             return state;
         }
+        case "UPDATE_JOIN_COMMUNITY_Complete": {
+            const { userID, userName, profileUrl } = action.data;
+            let communityDet = state.getIn(["otherCommunites",action.data.id]);
+            communityDet = communityDet.update("members", (data) => data.push({ userID, userName, profileUrl }))
+            state = state.deleteIn(["otherCommunites", action.data.id])
+            state = state.update("userCommunites", (community) => community.merge({ [action.data.id]: communityDet }));
+            return state;
+        }
         default : 
             return state;
     }

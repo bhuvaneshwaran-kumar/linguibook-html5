@@ -1,4 +1,4 @@
-import { setActiveCommunity, setLoader, updateCommunityLoad, updateOtherCommunity, updateUserCommunity } from "../actions";
+import { setActiveCommunity, setLoader, updateCommunityLoad, updateJoinCommunity, updateOtherCommunity, updateUserCommunity } from "../actions";
 import { axiosWithAuthToken as authAxios } from "../utils/interceptors"
 import { Map, OrderedMap, fromJS,  } from "immutable"
 import { wait } from "./auth";
@@ -99,4 +99,20 @@ export const changeCommunity = (payload = {}, of = "both") => {
             await dispatch(updateCommunityLoad({ isLoading: false }));
         }
     };
+}
+
+export const joinCommunity = (payload) => {
+    return async (dispatch) => {
+        try {
+            const { id, userId, userName, profileUrl } = payload;
+            await dispatch(updateCommunityLoad({ isLoading: true }));
+            await wait(100);
+            await dispatch(updateJoinCommunity({ id, userId, userName, profileUrl }));
+            await dispatch(setActiveCommunity({ id, type: "userCommunites" }));
+        } catch (err) {
+            return { error: true, message: error?.response?.data?.message };
+        } finally {
+            await dispatch(updateCommunityLoad({ isLoading: false }));
+        }
+    }
 }

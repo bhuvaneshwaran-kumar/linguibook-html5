@@ -139,4 +139,17 @@ const updatePostComment = async (data) => {
     }
 }
 
-module.exports = { Router, updatePostLike, updatePostComment }
+const joinCommunity = async (data) => {
+    const { id, userId, userName, profileUrl } = data;
+    try {
+        await Community.findByIdAndUpdate(
+            id,
+            { $push: { members: { userID: userId, userName: userName, profileUrl: profileUrl } } }, // push a single object with all properties
+            { new: true, useFindAndModify: false } // additional option to ensure compatibility
+        );
+    } catch (err) {
+        throw error;
+    }
+}
+
+module.exports = { Router, updatePostLike, updatePostComment, joinCommunity }
