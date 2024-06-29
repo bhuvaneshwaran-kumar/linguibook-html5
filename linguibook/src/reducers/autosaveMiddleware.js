@@ -1,4 +1,4 @@
-import { setActiveCommunityComplete, updateJoinCommunityComplete, updateVocabDataComplete } from "../actions";
+import { prepandPostDataComplete, setActiveCommunityComplete, updateJoinCommunityComplete, updateVocabDataComplete } from "../actions";
 import { sendSocketMessage } from "../socket";
 
 export const autosaveMiddleware = (store) => next => action => {
@@ -26,6 +26,11 @@ export const autosaveMiddleware = (store) => next => action => {
         case "UPDATE_JOIN_COMMUNITY": {
             sendSocketMessage("joinCommunity", action.data);
             store.dispatch(updateJoinCommunityComplete(action.data));
+            break;
+        }
+        case "PREPAND_POST_DATA": {
+            sendSocketMessage("prepandPostData", action.data);
+            store.dispatch(prepandPostDataComplete(action.data));
             break;
         }
         default: 

@@ -2,6 +2,7 @@ import { setActiveCommunity, setLoader, updateCommunityLoad, updateJoinCommunity
 import { axiosWithAuthToken as authAxios } from "../utils/interceptors"
 import { Map, OrderedMap, fromJS,  } from "immutable"
 import { wait } from "./auth";
+import { getPosts } from "./post";
 
 const create = async (params = {}) => {
     let headers = {};
@@ -93,6 +94,7 @@ export const changeCommunity = (payload = {}, of = "both") => {
             await wait(100);
             // await get post data
             await dispatch(setActiveCommunity({ id, type }));
+            await dispatch(getPosts({ communityId: id }))
         } catch (error) {
             return { error: true, message: error?.response?.data?.message };
         } finally {

@@ -159,4 +159,94 @@ const communityAggregate = [
   }
 ]
 
-module.exports = { getVoc, ctxtAggregate, communityAggregate }
+const getPostsAggregate = (communityId, from, size, userId) => {
+  return [
+    {
+      $match: {
+        communityId: communityId
+      }
+    },
+    { $skip: from },
+    { $limit: size },
+    {
+      $project: {
+        _id: { $toString: "$_id" }, // Convert ObjectId to string
+        heading: 1,
+        content: 1,
+        likesCount: {
+          $cond: {
+            if: { $isArray: "$likes" },
+            then: { $size: "$likes" },
+            else: 0
+          }
+        },
+        isLiked: {
+          $cond: {
+            if: { $isArray: "$likes" },
+            then: { $in: [userId, "$likes"] },
+            else: false
+          }
+        },
+        commentsCount: {
+          $cond: {
+            if: { $isArray: "$comments" },
+            then: { $size: "$comments" },
+            else: 0
+          }
+        },
+        comments: {
+          $cond: {
+            if: { $isArray: "$comments" },
+            then: { $slice: ["$comments", 5] },
+            else: []
+          }
+        }
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        posts: {
+          $push: {
+            k: "$_id",
+            v: {
+              heading: "$heading",
+              content: "$content",
+              likesCount: "$likesCount",
+              isLiked: "$isLiked",
+              commentsCount: "$commentsCount",
+              comments: "$comments"
+            }
+          }
+        }
+      }
+    },
+    {
+      $addFields: {
+        posts: {
+          $map: {
+            input: "$posts",
+            as: "item",
+            in: {
+              k: "$$item.k",
+              v: {
+                $mergeObjects: [
+                  "$$item.v",
+                  { index: { $add: [{ $indexOfArray: ["$posts", "$$item"] }, 1] } }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      $replaceRoot: {
+        newRoot: { $arrayToObject: "$posts" }
+      }
+    }
+  ];
+};
+
+
+module.exports = { getVoc, ctxtAggregate, communityAggregate, getPostsAggregate }

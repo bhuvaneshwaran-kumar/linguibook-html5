@@ -9,7 +9,8 @@ const initialState = fromJS({
         type: ""
     },
     userCommunites: OrderedMap({}),
-    otherCommunites: OrderedMap({})
+    otherCommunites: OrderedMap({}),
+    postsData: OrderedMap({})
 })
 
 const communityStorage = (state = initialState, action) => { 
@@ -32,12 +33,26 @@ const communityStorage = (state = initialState, action) => {
             state = state.update("otherCommunites", (community) => community.merge(action.data));
             return state;
         }
-        case "UPDATE_JOIN_COMMUNITY_Complete": {
+        case "UPDATE_JOIN_COMMUNITY_COMPLETE": {
             const { userID, userName, profileUrl } = action.data;
             let communityDet = state.getIn(["otherCommunites",action.data.id]);
             communityDet = communityDet.update("members", (data) => data.push({ userID, userName, profileUrl }))
             state = state.deleteIn(["otherCommunites", action.data.id])
             state = state.update("userCommunites", (community) => community.merge({ [action.data.id]: communityDet }));
+            return state;
+        }
+        case "INSERT_POST_DATA": { 
+            const { postsData } = action.data;
+            if (postsData !== undefined) { 
+                state = state.set("postsData", postsData);
+            }
+            return state;
+        }
+        case "PREPAND_POST_DATA_COMPLETE": { 
+            const { data } = action.data;
+            if (data !== undefined) { 
+                state = state.update("postsData", (postsData) => (OrderedMap(fromJS({ ...data })).merge(postsData)));
+            }
             return state;
         }
         default : 

@@ -23,6 +23,6 @@ const postSchema = new Schema(
     }
 )
 
-const Vocabulary = model("posts", postSchema)
+const Post = model("posts", postSchema)
 
-module.exports = Vocabulary
+module.exports = Post

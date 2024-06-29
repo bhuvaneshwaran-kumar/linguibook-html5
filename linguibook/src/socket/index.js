@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import io from "socket.io-client"
 import { API_URI } from "../utils/constant";
-import { setSocketStatus, updateJoinCommunityComplete, updateVocabDataComplete } from "../actions";
+import { prepandPostDataComplete, setSocketStatus, updateJoinCommunityComplete, updateVocabDataComplete } from "../actions";
 let socket;
 let timeout;
 let userId;
@@ -42,6 +42,10 @@ export default ({ children }) => {
         socket.on("joinCommunityComplete", (data) => { 
             // **todo to sjow joinn message
             // dispatch(updateJoinCommunityComplete(data))
+        })
+        
+        socket.on("prepandPostDataComplete", (data) => { 
+            dispatch(prepandPostDataComplete(data))
         })
     }
 

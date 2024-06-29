@@ -55,6 +55,11 @@ function connectSocket(server) {
             }
         }) 
 
+        socket.on("prepandPostData", async (data) => { 
+            const { communityId } = data;
+            socket.broadcast.to(communityId).emit("prepandPostDataComplete", data);
+        }) 
+
         socket.on("joinCommunity", async (data) => { 
             const { id, userId, userName, profileUrl  } = data;
             socket.broadcast.to(id).emit("joinCommunityComplete", { id, userId, userName, profileUrl });

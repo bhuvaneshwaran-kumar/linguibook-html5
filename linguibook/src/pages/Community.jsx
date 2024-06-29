@@ -7,6 +7,7 @@ import { CenterLoader } from '../components/VocabularyComponent'
 import { Image } from '../styles/style'
 import { setActiveCommunity } from '../actions'
 import { fromJS } from 'immutable'
+import { createPost } from '../thunk/post'
 
 const CommunityOuter = styled.div`
   width: 100vw;
@@ -37,8 +38,8 @@ const CommunityInner = styled.div`
 
 const CommunityInnerLeft = styled.div`
   height: 100%;
-  width: 30%;
-  display: flex;
+  width: 32%;
+  display:flex;
   flex-direction: column;
   gap: 6px;
   & > .top, & > .bottom, & > .crt-cum{
@@ -145,6 +146,45 @@ const CommunityInnerRight = styled.div`
     }
   }
 `
+
+const CardOuter = styled.div`
+  width: 90%;
+  margin: auto;
+  box-shadow: 0 0 4px #5151ac7f;
+  padding: 10px 5px;
+  border-radius: 6px;
+  & > .header{
+    margin: 0 auto;
+    padding: 4px;
+    background: #c4e0f9;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+  & > .content {
+    white-space: wrap;
+    & > * {
+      white-space: wrap;
+    }
+  }
+  & .voc-btm { 
+    display: flex;
+    gap: 7px;
+    box-shadow: 0 0 4px #5151ac7f;
+    padding: 4px;
+    border-radius: 5px;
+    margin-top: 8px;
+    & img {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      transition: all 0.2s;
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
+`
+
 const FormOuter = styled.div`
     display: flex;
     flex-direction: column;
@@ -173,11 +213,18 @@ const FormOuter = styled.div`
             width: 80%;
           }
         }
+        & > .quill {
+          margin-right: 10px;
+        }
         & .ql-container{
           min-height: 150px;
           max-height: 150px;
           overflow-x: hidden;
           overflow-y: scroll;
+        }
+        &.post .ql-container{
+          min-height: 320px;
+          max-height: 320px;
         }
       }
     }
@@ -247,7 +294,7 @@ const CommunityForm = (props) => {
       adminProfileUrl: props.userDet.get("profileUrl"),
      })
 
-    if (!result.error) { 
+    if (!result?.error) { 
       setCommunityInfo({ profileUrl: profileImgs[0], name: "", description: "" })
       setErrMsg("")
     } else { 
@@ -304,24 +351,104 @@ const CommunityForm = (props) => {
   )
 }
 
-const CommunityPost = (props) => {
+const PostForm = (props) => {
+  const [postInfo, setCommunityInfo] = useState({ heading: "", content: "" })
+
+  const handleHeadingChange = (heading) => { 
+    setCommunityInfo(prevState => ({ ...prevState, heading }))
+  }
+
+  const handleContentChange = (content) => { 
+    setCommunityInfo(prevState => ({ ...prevState, content }))
+  }
+
+
+  const handleSubmitPost = async () => {
+    await props.createPost({
+      heading: postInfo.heading,
+      content: postInfo.content,
+      communityId: props.activeCommunity.get("id"),
+    })
+    props.goPrev();
+  }
+
+
+  const preventPost = postInfo.content.trim() === "" || postInfo.content.trim() === "<p><br></p>" || postInfo.heading.trim() === ""
+
   return (
     <>
       <div className="header">
-        <p>You're in <span className='active-clr'>Tech Titans</span> Community</p>
-        <p className='cr-pt' tabIndex={1}>Create Post</p>
+        <p onClick={() => props.goPrev()} className={`cr-pt`} tabIndex={1}>Go Prev</p>
+        <p>create post on <span className='active-clr'>{props.communityData.get("name")}</span> Community</p>
+        <p onClick={handleSubmitPost} className={`cr-pt ${preventPost && "disabled"}`} tabIndex={1}>Post</p>
       </div>
       <div className='post'>
-        <div className="header">
-          <p>React 18 functionalities</p>
-        </div>
-        <pre className="content">
-          1. React Hooks: Introduced in React 16.8, hooks allow functional components to use state, lifecycle methods, and other React features without writing a class. This simplifies component logic and promotes code reuse. <br />
-          2. React Suspense: Suspense is a feature that enables React components to wait for something (like data fetching) before rendering. It improves user experience by providing better control over loading states and enabling smoother transitions. <br />
-          3. React.lazy(): This function allows for dynamic code splitting by enabling lazy loading of components. It's particularly useful for optimizing bundle size and improving initial load times for large applications. <br />
-          4. Concurrent Mode: Still experimental as of now, Concurrent Mode is a set of features in React that aims to improve the responsiveness and performance of applications by allowing React to pause, resume, or prioritize rendering updates based on their priority. <br />
-          5. React.memo(): Similar to React's PureComponent, React.memo() is a higher-order component that memoizes the result of a functional component rendering. It's used to optimize performance by preventing unnecessary re-renders of functional components.
-        </pre>
+        <FormOuter className="form">
+          <div className="row mid">
+            <div className="lf cum-name">
+              <p>Community Name :</p>
+            </div>
+            <div className="rt cum-value">
+              <input type="text" value={postInfo.heading} max={60} onInput={(e) => handleHeadingChange(e.target.value)} />
+            </div>
+            {/* <span style={{ color: "red", fontSize: "small", padding: "0px 10px" }}>{errMsg}</span> */}
+          </div>
+          <div className="row">
+            <div className="lf cum-name">
+              <p>Community Description :</p>
+            </div>
+            <div className="rt cum-value post">
+              <ReactQuill modules={modules?.module} theme="snow" value={postInfo.content} onChange={(content) => handleContentChange(content)} placeholder='Describe your Community' />
+            </div>
+          </div>
+        </FormOuter>
+      </div>
+    </>
+  )
+}
+
+const CommunityPost = (props) => {
+  const [showPostForm, setShowPostForm] = useState(false)
+  const [showComments, setShowComments] = useState(false)
+  if (showPostForm) { 
+    return <PostForm goPrev={() => setShowPostForm(false)} communityData={props.communityData} createPost={props.createPost} activeCommunity={props.activeCommunity} />
+  }
+  
+  const handleLikeClick = () => { 
+
+  }
+  const handleShowComment = () => { 
+
+  }
+
+  let postCards = props.postsData.entrySeq().map(([key, value], index) => {
+    return <CardOuter className="card-outer" key={key}>
+      <div className="header">
+        <p>{value.get("heading")}</p>
+      </div>
+      <div className="content" dangerouslySetInnerHTML={{ __html: value.get("content") }}>
+      </div>
+      <div className="voc-btm" /* ref={(index + 1 === vocabularies.size) ? lastElementRef : null} */>
+        <img src={`/images/post/${value.get("isLiked") ? 'like-active' : 'like'}.png`} alt='like' onClick={() => handleLikeClick(!value.get("isLiked"), key)} />
+        <span>{value.get("likesCount")} likes</span>
+        <img src='/images/post/comment.png' alt='comment' onClick={() => handleShowComment(key)} />
+        <span>{value.get("commentsCount")} comments</span>
+      </div>
+    </CardOuter>
+  })
+
+  if (!postCards.size) { 
+    postCards = <p style={{ margin: "auto", color: "gray", fontWeight: "bold" }}>No Post is made in this community!</p>
+  }
+
+  return (
+    <>
+      <div className="header">
+        <p>You're in <span className='active-clr'>{props.communityData.get("name")}</span> Community</p>
+        <p className='cr-pt' tabIndex={1} onClick={() => setShowPostForm(true)}>Create Post</p>
+      </div>
+      <div className='post'>
+        {postCards}
       </div>
     </>
   )
@@ -329,7 +456,7 @@ const CommunityPost = (props) => {
 
 const ViewCommunity = (props) => {
   const community = props.communityData;
-  
+
   const handleJoinCommunity = () => { 
     props.joinCommunity({ id: props.activeCommunity.get("id"), userId: props.userDet.get("_id"), userName: props.userDet.get("name"), profileUrl: props.userDet.get("profileUrl") });
   }
@@ -424,7 +551,7 @@ function Community(props) {
         <CommunityInnerRight>
           {
           rightView === RIGHT_VIEWS.communityPost && (
-              <CommunityPost activeCommunity={props.activeCommunity} otherCommunites={props.otherCommunites} userCommunites={props.otherCommunites}/>
+              <CommunityPost postsData={props.postsData} communityData={activeCommunityData} activeCommunity={props.activeCommunity} otherCommunites={props.otherCommunites} userCommunites={props.otherCommunites} createPost={props.createPost} />
           ) 
           }
           {
@@ -449,12 +576,14 @@ const mapStateToProps = (state, ownProps) => ({
   activeCommunity:  state.communityStorage.get("activeCommunity"),
   userCommunites:  state.communityStorage.get("userCommunites"),
   otherCommunites: state.communityStorage.get("otherCommunites"),
+  postsData: state.communityStorage.get("postsData"),
 })
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   createCommunity: (payload) => dispatch(createCommunity(payload)),
   changeCommunity: (payload) => dispatch(changeCommunity(payload)),
   joinCommunity: (payload) => dispatch(joinCommunity(payload)),
+  createPost: (payload) => dispatch(createPost(payload)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Community)

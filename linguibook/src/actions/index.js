@@ -57,7 +57,7 @@ export const updateJoinCommunity = (data) => ({
 })
 
 export const updateJoinCommunityComplete = (data) => ({
-    type: "UPDATE_JOIN_COMMUNITY_Complete",
+    type: "UPDATE_JOIN_COMMUNITY_COMPLETE",
     data
 })
 
@@ -73,6 +73,21 @@ export const setActiveCommunity = (data) => ({
 
 export const setActiveCommunityComplete = (data) => ({
     type: "SET_ACTIVE_COMMUNITY_COMPLETE",
+    data
+})
+
+export const insertPostData = (data) => ({
+    type: "INSERT_POST_DATA",
+    data
+})
+
+export const prepandPostData = (data, communityId) => ({
+    type: "PREPAND_POST_DATA",
+    data
+})
+
+export const prepandPostDataComplete = (data) => ({
+    type: "PREPAND_POST_DATA_COMPLETE",
     data
 })
 
