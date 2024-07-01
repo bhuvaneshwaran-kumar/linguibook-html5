@@ -44,22 +44,22 @@ Router.post('/gp', isAuthenticated, async (req, res) => {
 
 
 const updatePostLike = async (data) => { 
-    const { isLiked, vocabId, userId } = data;
+    const { isLiked, postId, userId } = data;
 
     try {
         let updatedVocabulary;
 
         if (isLiked) {
             // Add userId to likes array if not already present
-            updatedVocabulary = await Vocabulary.findByIdAndUpdate(
-                vocabId,
+            updatedVocabulary = await Post.findByIdAndUpdate(
+                postId,
                 { $addToSet: { likes: userId } }, // $addToSet ensures no duplicate userIds
                 { new: true }
             );
         } else {
             // Remove userId from likes array
-            updatedVocabulary = await Vocabulary.findByIdAndUpdate(
-                vocabId,
+            updatedVocabulary = await Post.findByIdAndUpdate(
+                postId,
                 { $pull: { likes: userId } },
                 { new: true }
             );

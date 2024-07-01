@@ -76,6 +76,16 @@ export const setActiveCommunityComplete = (data) => ({
     data
 })
 
+export const likePost = (data) => ({
+    type: "LIKE_POST",
+    data
+})
+
+export const likePostComplete = (data) => ({
+    type: "LIKE_POST_COMPLETE",
+    data
+})
+
 export const insertPostData = (data) => ({
     type: "INSERT_POST_DATA",
     data

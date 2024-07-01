@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { changeCommunity, createCommunity, joinCommunity } from '../thunk/community'
 import { CenterLoader } from '../components/VocabularyComponent'
 import { Image } from '../styles/style'
-import { setActiveCommunity } from '../actions'
+import { likePost, setActiveCommunity } from '../actions'
 import { fromJS } from 'immutable'
 import { createPost } from '../thunk/post'
 
@@ -414,8 +414,10 @@ const CommunityPost = (props) => {
     return <PostForm goPrev={() => setShowPostForm(false)} communityData={props.communityData} createPost={props.createPost} activeCommunity={props.activeCommunity} />
   }
   
-  const handleLikeClick = () => { 
-
+  const handleLikeClick = (isLiked, postId) => { 
+    console.log("handleLikeClick", isLiked, postId);
+    if(isLiked !== undefined)
+      props.likePost({ isLiked, postId, communityId: props.activeCommunity.get("id") })
   }
   const handleShowComment = () => { 
 
@@ -551,7 +553,7 @@ function Community(props) {
         <CommunityInnerRight>
           {
           rightView === RIGHT_VIEWS.communityPost && (
-              <CommunityPost postsData={props.postsData} communityData={activeCommunityData} activeCommunity={props.activeCommunity} otherCommunites={props.otherCommunites} userCommunites={props.otherCommunites} createPost={props.createPost} />
+              <CommunityPost likePost={props.likePost} postsData={props.postsData} communityData={activeCommunityData} activeCommunity={props.activeCommunity} otherCommunites={props.otherCommunites} userCommunites={props.otherCommunites} createPost={props.createPost} />
           ) 
           }
           {
@@ -584,6 +586,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   changeCommunity: (payload) => dispatch(changeCommunity(payload)),
   joinCommunity: (payload) => dispatch(joinCommunity(payload)),
   createPost: (payload) => dispatch(createPost(payload)),
+  likePost: (payload) => dispatch(likePost(payload)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Community)

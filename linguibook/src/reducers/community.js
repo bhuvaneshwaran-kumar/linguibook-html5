@@ -55,6 +55,16 @@ const communityStorage = (state = initialState, action) => {
             }
             return state;
         }
+        case "LIKE_POST_COMPLETE": { 
+            const { isLiked, postId, likesCount } = action.data
+            if (isLiked !== undefined) { 
+                state = state.setIn(["postsData", postId, "isLiked"], isLiked);
+                state = state.updateIn(["postsData", postId, "likesCount"], (value) => isLiked ? value + 1 : value - 1);
+            }
+            if (likesCount !== undefined) { 
+                state = state.updateIn(["postsData", postId, "likesCount"], (value) => value + likesCount);
+            }
+        }
         default : 
             return state;
     }

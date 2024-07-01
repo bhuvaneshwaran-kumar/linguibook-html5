@@ -2,6 +2,7 @@ const socketIo = require("socket.io");
 const { CORS_ORIGIN } = require("../constants");
 const { updateLike, updateComment } = require("../routes/ctxtVoc");
 const { joinCommunity } = require("../routes/community");
+const { updatePostLike } = require("../routes/post");
 let CORS_ORIGINS = CORS_ORIGIN.split(' ');
 
 function connectSocket(server) {
@@ -65,6 +66,17 @@ function connectSocket(server) {
             socket.broadcast.to(id).emit("joinCommunityComplete", { id, userId, userName, profileUrl });
             try{
                 await joinCommunity(data);
+            } catch (err) { 
+                // throw error autoSaveException
+            }
+        })
+
+        socket.on("likePost", async (data) => { 
+            const { communityId, isLiked } = data;
+            socket.broadcast.to(communityId).emit("likePostComplete", data);
+            try {
+                console.log(data, "data");
+                await updatePostLike(data);
             } catch (err) { 
                 // throw error autoSaveException
             }

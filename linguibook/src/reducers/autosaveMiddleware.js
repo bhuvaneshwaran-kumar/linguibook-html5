@@ -1,4 +1,4 @@
-import { prepandPostDataComplete, setActiveCommunityComplete, updateJoinCommunityComplete, updateVocabDataComplete } from "../actions";
+import { likePostComplete, prepandPostDataComplete, setActiveCommunityComplete, updateJoinCommunityComplete, updateVocabDataComplete } from "../actions";
 import { sendSocketMessage } from "../socket";
 
 export const autosaveMiddleware = (store) => next => action => {
@@ -32,6 +32,10 @@ export const autosaveMiddleware = (store) => next => action => {
             sendSocketMessage("prepandPostData", action.data);
             store.dispatch(prepandPostDataComplete(action.data));
             break;
+        }
+        case "LIKE_POST": { 
+            sendSocketMessage("likePost", action.data);
+            store.dispatch(likePostComplete(action.data));
         }
         default: 
             break;

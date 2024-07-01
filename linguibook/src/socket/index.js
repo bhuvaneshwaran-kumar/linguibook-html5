@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import io from "socket.io-client"
 import { API_URI } from "../utils/constant";
-import { prepandPostDataComplete, setSocketStatus, updateJoinCommunityComplete, updateVocabDataComplete } from "../actions";
+import { likePostComplete, prepandPostDataComplete, setSocketStatus, updateJoinCommunityComplete, updateVocabDataComplete } from "../actions";
 let socket;
 let timeout;
 let userId;
@@ -37,6 +37,16 @@ export default ({ children }) => {
                 }
             }
             dispatch(updateVocabDataComplete(data))
+        })
+        
+        socket.on("likePostComplete", (data) => { 
+            if (userId !== data.userId) { 
+                if (data.isLiked !== undefined) { 
+                    data.likesCount = data.isLiked ? 1 : -1;
+                    delete data.isLiked    
+                }
+            }
+            dispatch(likePostComplete(data))
         })
 
         socket.on("joinCommunityComplete", (data) => { 
